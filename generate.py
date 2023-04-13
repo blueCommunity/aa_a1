@@ -1,10 +1,14 @@
 import random
+import math
 
 if __name__ == '__main__':
-    i = 5
+    i =  5000
+    row = int(math.sqrt(i))
+    temp = range(int(math.sqrt(i)))
     with open('sample' + str(i) + '.txt', 'w') as file:
-        cols = random.sample(range(i), i)
-        rows = random.sample(range(i), i)
+        cols = random.sample(temp, row)
+        rows = random.sample(temp, row)
     
-        for i in range(i):
-            file.write(str(rows[i]) + " " + str(cols[i]) + " 1\n")
+        for x in (temp):
+            for y in (temp):
+                file.write(str(rows[x]) + " " + str(cols[y]) + " 1\n")
