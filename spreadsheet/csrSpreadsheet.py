@@ -1,6 +1,7 @@
 from spreadsheet.baseSpreadsheet import BaseSpreadsheet
 from spreadsheet.cell import Cell
 
+
 # ------------------------------------------------------------------------
 # This class is required TO BE IMPLEMENTED
 # Trie-based dictionary implementation.
@@ -17,9 +18,12 @@ class CSRSpreadsheet(BaseSpreadsheet):
     def __init__(self):
         # TO BE IMPLEMENTED
         pass
-        self.ColA = []
-        self.ValA = []
-        self.SumA = []
+        self.colA = []
+        self.valA = []
+        self.sumA = []
+        self.cols = 0
+        self.rows = 0
+        self.cells = []
 
 
     def buildSpreadsheet(self, lCells: [Cell]):
@@ -31,9 +35,15 @@ class CSRSpreadsheet(BaseSpreadsheet):
         # TO BE IMPLEMENTED
         pass
         for cell in sorted(lCells, key=lambda c: (c.row, c.col)):
-            self.SumA.append(self.sumA[-1] + cell.val)
-            self.ColA.append(cell.col)
-            self.SumA.append(cell.val)
+            if self.sumA == []:
+                self.sumA.append( (0))
+            self.sumA.append( (self.sumA[-1]) +  (cell.val))
+            self.colA.append(cell.col)
+            self.valA.append(cell.val)
+            self.cols = cell.col + 1
+            self.rows = cell.row + 1
+            self.cells.append(cell)
+        
 
 
     def appendRow(self):
@@ -45,6 +55,9 @@ class CSRSpreadsheet(BaseSpreadsheet):
 
         # TO BE IMPLEMENTED
         pass
+        self.rows += 1
+        return True
+        
 
 
     def appendCol(self):
@@ -56,6 +69,8 @@ class CSRSpreadsheet(BaseSpreadsheet):
 
         # TO BE IMPLEMENTED
         pass
+        self.cols += 1
+        return True
 
 
     def insertRow(self, rowIndex: int)->bool:
@@ -66,7 +81,12 @@ class CSRSpreadsheet(BaseSpreadsheet):
 
         @return True if operation was successful, or False if not, e.g., rowIndex is invalid.
         """
-
+        if rowIndex >= len(self.sumA) or rowIndex < 0:
+            return False
+        self.rows += 1
+        for cell in sorted(self.cells, key=lambda c: (c.row, c.col)):
+            if rowIndex < cell.row:
+                cell.row += 1
         # REPLACE WITH APPROPRIATE RETURN VALUE
         return True
 
@@ -79,24 +99,38 @@ class CSRSpreadsheet(BaseSpreadsheet):
 
         return True if operation was successful, or False if not, e.g., colIndex is invalid.
         """
+        self.cols += 1
+        for cell in sorted(self.cells, key=lambda c: (c.row, c.col)):
+            if colIndex < cell.col:
+                cell.col += 1
 
         # REPLACE WITH APPROPRIATE RETURN VALUE
         return True
 
 
 
-    def update(self, rowIndex: int, colIndex: int, value: float) -> bool:
+    def update(self, rowIndex: int, colIndex: int, value:  float) -> bool:
         """
         Update the cell with the input/argument value.
 
         @param rowIndex Index of row to update.
         @param colIndex Index of column to update.
-        @param value Value to update.  Can assume they are floats.
+        @param value Value to update.  Can assume they are  s.
 
         @return True if cell can be updated.  False if cannot, e.g., row or column indices do not exist.
         """
-
         # TO BE IMPLEMENTED
+        if rowIndex >= self.rows or colIndex >= self.cols:
+            return False
+        for cell in self.cells:
+            if cell.row == rowIndex and cell.col == colIndex:
+                old_value = cell.val
+                cell.val = value
+                for i in range(rowIndex, len(self.sumA)):
+                    self.sumA[i] += value - old_value
+                return True
+        self.cells.append(Cell(rowIndex, colIndex, value))
+        
 
         # REPLACE WITH APPROPRIATE RETURN VALUE
         return True
@@ -107,7 +141,7 @@ class CSRSpreadsheet(BaseSpreadsheet):
         @return Number of rows the spreadsheet has.
         """
         # TO BE IMPLEMENTED
-        return 0
+        return self.rows
 
 
     def colNum(self)->int:
@@ -115,12 +149,12 @@ class CSRSpreadsheet(BaseSpreadsheet):
         @return Number of column the spreadsheet has.
         """
         # TO BE IMPLEMENTED
-        return 0
+        return self.cols
 
 
 
 
-    def find(self, value: float) -> [(int, int)]:
+    def find(self, value: float ) -> [(int, int)]:
         """
         Find and return a list of cells that contain the value 'value'.
 
@@ -130,14 +164,11 @@ class CSRSpreadsheet(BaseSpreadsheet):
 	    """
 
         # TO BE IMPLEMENTED
+        
         result = []
-        for i, v in enumerate(self.ValA):
-            temp += self.ValA[i]
-            if v == value:
-                j = 0
-                while temp > self.SumA[j]:
-                    j += 1
-                return result.append(j, self.ColA[i])
+        for cell in self.cells:
+            if cell.val == value:
+                result.append((cell.row, cell.col))
         
         # REPLACE WITH APPROPRIATE RETURN VALUE
         return result
@@ -149,5 +180,11 @@ class CSRSpreadsheet(BaseSpreadsheet):
         """
         return a list of cells that have values (i.e., all non None cells).
         """
+        # TO BE IMPLEMENTED
+        
+        result = []
+        for cell in self.cells:
+            result.append(cell)
+        result.sort(key=lambda c: (c.row, c.col))
+        return result
 
-        return []

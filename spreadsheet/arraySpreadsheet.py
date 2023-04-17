@@ -28,10 +28,10 @@ class ArraySpreadsheet(BaseSpreadsheet):
         # TO BE IMPLEMENTED 
         pass
         for cell in lCells:
-            for row in range(cell.rows +1):
+            for row in range(cell.row +1):
                 if row >= len(self.spreadsheet):
                     self.spreadsheet.append([])
-                for col in range(cell.cols+ 1):
+                for col in range(cell.col+ 1):
                     if col >= len(self.spreadsheet[row]):
                         self.spreadsheet[row].append(None)
             self.spreadsheet[cell.row][cell.col] = cell.val

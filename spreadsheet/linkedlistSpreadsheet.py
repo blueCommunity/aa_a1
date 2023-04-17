@@ -3,12 +3,16 @@ from spreadsheet.cell import Cell
 
 
 class ListNode:
-    def __init__(self, cell: Cell, prev=None, next=None,prev_row=None, next_row=None):
+    '''
+    Define a node in the linked list
+    '''
+
+    def __init__(self, cell: Cell):
         self.cell = cell
-        self.prev = prev
-        self.next = next
-        self.prev_row = prev_row
-        self.next_row = next_row
+        self.next = None
+        self.prev = None
+        self.next_row = None
+        self.prev_row = None
 
 # ------------------------------------------------------------------------
 # This class  is required TO BE IMPLEMENTED
@@ -21,6 +25,8 @@ class ListNode:
 class LinkedListSpreadsheet(BaseSpreadsheet):
 
     def __init__(self):
+        # TO BE IMPLEMENTED
+        pass
         # first node in the linked list
         self.head = None
         # last node in the linked list
@@ -34,31 +40,37 @@ class LinkedListSpreadsheet(BaseSpreadsheet):
         Construct the data structure to store nodes.
         @param lCells: list of cells to be stored
         """
-        for cell in sorted(lCells, key=lambda c: (c.row, c.col)):
-            new_node = ListNode(cell)
 
+        # TO BE IMPLEMENTED
+        pass
+        for cell in sorted(lCells, key=lambda c: (c.row, c.col)):
+            node = ListNode(cell)
             if self.head is None:
-                self.head = new_node
-                self.tail = new_node
+                self.head = node
+                self.tail = node
+                self.rows = cell.row + 1
+                if self.cols < cell.col + 1:
+                    self.cols = cell.col + 1
             else:
                 if cell.row != self.tail.cell.row:
-                    new_node.prev_row = self.tail
-                    self.tail.next_row = new_node
-                    self.tail = new_node
+                    node.prev_row = self.tail
+                    self.tail.next_row = node
+                    self.tail = node
                 else:
-                    new_node.prev = self.tail
-                    self.tail.next = new_node
-                    self.tail = new_node
-
-            self.rows = max(self.rows, cell.row + 1)
-            self.cols = max(self.cols, cell.col + 1)
+                    node.prev = self.tail
+                    self.tail.next = node
+                    self.tail = node
+                
+                self.rows = cell.row + 1
+                if self.cols < cell.col + 1:
+                    self.cols = cell.col + 1
 
     def appendRow(self):
-        """
-        Appends an empty row to the spreadsheet.
-        """
-        self.rows += 1
-        return True
+            """
+            Appends an empty row to the spreadsheet.
+            """
+            self.rows += 1
+            return True
 
 
     def appendCol(self):
@@ -127,6 +139,10 @@ class LinkedListSpreadsheet(BaseSpreadsheet):
 
         @return True if cell can be updated.  False if cannot, e.g., row or column indices do not exist.
         """
+        if rowIndex < 0 or colIndex < 0:
+            return False
+        if rowIndex >= self.rows or colIndex >= self.cols:
+            return False
         head = self.head
         while head is not None:
             if head.cell.row == rowIndex and head.cell.col == colIndex:
